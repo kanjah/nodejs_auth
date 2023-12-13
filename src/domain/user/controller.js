@@ -4,7 +4,7 @@ const { hashData, verifyHashedData } = require("./../../util/hashData");
 const createToken = require("../../util/createToken");
 
 
-//for user Signup
+//for user Login
 const authenticateUSer = async (data) => {
     try {
         const { email, password } = data;
@@ -15,6 +15,11 @@ const authenticateUSer = async (data) => {
         });
         if (!fetchedUser) {
             throw Error("email entered is not registered to any account");
+        }
+
+        //check if the user account is verified
+        if (!fetchedUser.verified) {
+            throw Error("Email hasn't been verified yet. Check your inbox");
         }
 
         //check if hashed password is the same with the unhashed passwod enterd by the user
