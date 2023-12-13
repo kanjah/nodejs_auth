@@ -1,7 +1,31 @@
 const User = require("./../user/model");
-const { sendOTP } = require("./../otp/controller");
+const { sendOTP, verifyOTP, deleteOTP } = require("./../otp/controller");
+const { hashData } = require("./../../util/hashData");
 
 
+//reset user pass
+const resetUserPassword = async ({ email, otp, newPassword }) => {
+    try {
+        const validOTP = await verifyOTP({ email, otp });
+        if (!validOTP) {
+            throw Error("Invalid code passed. Confirm from your inbox again");
+        }
+
+        //now update user record with new password
+        const hashedNewPassword = await hashData(newPassword);
+        await User.updateOne({ email }, { password: hashedNewPassword });
+
+        //delete otp after password change
+        await deleteOTP(email);
+
+        return;
+    }
+
+    catch (error) {
+        throw error;
+    }
+}
+//send user reset pass otp
 const sendPasswordResetOTPEmail = async (email) => {
     try {
         //check i an account exists
@@ -30,4 +54,4 @@ const sendPasswordResetOTPEmail = async (email) => {
     }
 };
 
-module.exports = { sendPasswordResetOTPEmail };
+module.exports = { sendPasswordResetOTPEmail, resetUserPassword };
