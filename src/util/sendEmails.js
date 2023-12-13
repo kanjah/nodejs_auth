@@ -14,10 +14,10 @@ let transporter = nodemailer.createTransport({
 //test transporter
 transporter.verify((error, success) => {
     if (error) {
-        console.log("Ready for messages")
+        console.log("Not ready for messages")
     }
     else {
-        console.log("REady for messages")
+        console.log("Ready for messages")
         console.log(success)
     }
 })
